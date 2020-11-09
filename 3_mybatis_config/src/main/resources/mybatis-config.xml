@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--1.和spring的context：property-placeholder;引用外部文件-->
+    <!--
+    resource:从类路径下开始引用
+    url:引用磁盘路径或者网络路径的资源
+    -->
+    <properties resource="dbconfig.properties"/>
+
+    <!--2.settings 这是 MyBatis 中极为重要的调整设置，它们会改变 MyBatis 的运行时行为-->
+    <settings>
+        <!--name:配置项的key， value：配置项的值-->
+        <!--loginAccount     login_account -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <!--3.typeAliases  类型别名，为常用的javaBean起别名,别名默认是类名（不区分大小写），配置文件中就可以用别名了-->
+    <!--alias:别名的名称-->
+    <typeAliases>
+<!--        <typeAlias type="com.sqx.bean.Employee" alias="emp"/>-->
+        
+        <!--批量起别名; name:指定包名， 默认为类名（不区分大小写）-->
+<!--        <package name="com.sqx.bean"/>-->
+        <!--就用全类名-->
+    </typeAliases>
+
+    <!--4.类型处理器，作用：-->
+<!--    <typeHandlers>-->
+<!--        &lt;!&ndash;自定义好的类型处理器就这么配置好就行了&ndash;&gt;-->
+<!--        <typeHandler handler=""/>-->
+<!--    </typeHandlers>-->
+
+    <!--5.插件时mybatis提供的一个强大的机制-->
+
+    <!--
+        6.environments配置环境们
+        environment：配置一个具体的环境.都需要一个事务管理器和一个数据源
+            transactionManager:
+        后来数据源，和事务管理都是spring来做
+    -->
+    <!--default="development":默认使用哪个环境-->
+    <environments default="development">
+        <!--id="testEnv"  环境的唯一标识-->
+<!--        <environment id="testEnv">-->
+<!--            <transactionManager type=""></transactionManager>-->
+<!--            <dataSource type="">-->
+<!--                <property name="driver" value="${driverclass}"/>-->
+<!--                <property name="url" value="jdbcurl=jdbc:mysql://localhost:3306/zhuce?serverTimezone=UTC"/>-->
+<!--                <property name="username" value="${username}"/>-->
+<!--                <property name="password" value="${password}"/>-->
+<!--            </dataSource>-->
+<!--        </environment>-->
+
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+
+            <!--配置连接池-->
+            <dataSource type="POOLED">
+                <!--使用${} 取出配置文件的值-->
+                <property name="driver" value="${driverclass}"/>
+                <property name="url" value="${jdbcurl}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--7.mybatis用来考虑数据库移植性的-->
+    <databaseIdProvider type="DB_VENDOR">
+        <!--name:写数据库厂商别名， value：给这个标识起个名字
+            MySQL、Oracle、SQL Server
+        -->
+        <property name="MySQL" value="mysql"/>
+        <property name="Oracle" value="oracle"/>
+        <property name="SQL Server" value="sqlserver"/>
+    </databaseIdProvider>
+
+    <!--引入我们自己编写的每一个接口的实现文件-->
+
+    <!--8.写好的sql映射文件需要用mappers注册进来-->
+    <mappers>
+        <!--
+            url:从磁盘或者网络路径引用
+            resource:再类路径下找sql映射文件
+            class:直接引用接口的全类名，可以将xml和dao接口放在同目录下
+
+        -->
+<!--        <mapper class="com.sqx.dao.EmployeeDaoAnnotation"/>-->
+<!--        <mapper resource="EmployeeDao.xml"/>-->
+        <!--配置使用：重要的dao可以写配置
+        简单的dao直接标注解
+        -->
+        
+        <!--批量注册-->
+        <package name="com.sqx.dao"/>
+        
+    </mappers>
+</configuration>
