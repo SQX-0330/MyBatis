@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqx.dao.EmployeeDao">
+
+    <!--
+        这个文件中能写的所有标签：
+        cache：和缓存有关
+        cache-ref：和缓存有关
+
+        parameterMap：参数map：废弃的。。。原来是做复杂参数映射的
+        resultMap：结果映射，自定义结果集的封装规则
+        sql:抽取可重用的sql
+
+        delete、update、insert、select：增删改查
+
+    -->
+
+    <!--    public int insertEmployee(Employee employee);-->
+    <!--
+        让mybatis自动的将自增id赋值给传入的employee对象的id属性
+        useGeneratesKeys="true":原生jdbc获取自增主键的方法。
+        keyProperty="":将刚才自增的id封装给哪一个属性
+    -->
+    <insert id="insertEmployee" useGeneratedKeys="true" keyProperty="id">
+
+        <!--order="BEFORE":
+                在核心sql语句之前先运行一个查询sql查到id；将查到的id赋值给javaBean的哪个属性
+        -->
+    <selectKey order="BEFORE" keyProperty="id">
+        select max(id) from t_employee
+    </selectKey>
+        insert into t_employee(empname, gender, email)
+        values (#{empName}, #{gender}, #{email})
+    </insert>
+
+    <insert id="insertEmployee2">
+        <selectKey order="BEFORE" resultType="Integer" keyProperty="id">
+            select max(id)+1 from t_employee
+        </selectKey>
+        insert into t_employee(id, empname, gender, email)
+        values (#{id}, #{empName}, #{gender}, #{email})
+    </insert>
+
+
+    <!--    public Employee getEmpById(Integer id);-->
+    <select id="getEmpById" resultType="com.sqx.bean.Employee">
+        select * from t_employee where id=#{id}
+    </select>
+
+    <!--    public Employee getEmpByIdAndEmpName(Integer id, String empName);-->
+    <select id="getEmpByIdAndEmpName" resultType="com.sqx.bean.Employee">
+        select * from t_employee where id=#{id} and empname=#{empName}
+    </select>
+
+
+    <select id="getEmployeeByIdAndEmpName" resultType="com.sqx.bean.Employee">
+        select * from t_employee where id=#{id} and empname=#{empName}
+    </select>
+
+    <!--现象：
+        1）、单个参数
+                基本类型：
+                    取值： #{随便写}
+                传入pojo:
+
+        2）、多个参数：
+             public Employee getEmpByIdAndEmpName(Integer id, String empName);
+             取值：#{参数名}是无效了
+             可用：0，1（参数索引）或者param1，param2（第几个参数paramN）
+             原因：只要传入了多个参数;mybatis会自动的将这些参数封装在一个map中
+                    封装时使用的key就是参数的索引和第几个标识
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("1", 传入的值);
+                    map.put("2", 传入的值);
+                    #{key}就是从这个map中取的值
+              （3）@Param:为参数指定key：命名参数；推荐这么做
+                    我们可用告诉mybatis，封装参数map的时候别乱来，使用我们指定的key
+
+       4）、传入map：将多个要使用的参数封装起来
+
+        5）、传放pojo（javaBean）
+        取值：#{pojo属性名}
+
+        扩展：多个参数：自动封装map；
+        method01(@Param("id")Integer id, String empName, Employee employee);
+        Integer id -> #{id}
+        String empName -> #{param2}
+        Employee employee -> #{param3.email}
+
+        无论传入什么参数都要能正确取出值
+        #{key/属性名}
+    -->
+
+
+
+<!--    public int updateEmployee(Employee employee);-->
+    <update id="updateEmployee">
+        update t_employee
+            set empname=#{empName}, gender=#{gender}, email=#{email}
+            where id=#{id}
+    </update>
+
+<!--    public int deleteEmployee(Integer id);-->
+    <delete id="deleteEmployee">
+        delete from t_employee where id=#{id}
+    </delete>
+
+</mapper>

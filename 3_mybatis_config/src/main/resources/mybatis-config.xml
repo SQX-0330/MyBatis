@@ -20,7 +20,7 @@
     <!--3.typeAliases  类型别名，为常用的javaBean起别名,别名默认是类名（不区分大小写），配置文件中就可以用别名了-->
     <!--alias:别名的名称-->
     <typeAliases>
-<!--        <typeAlias type="com.sqx.bean.Employee" alias="emp"/>-->
+<!--        <typeAlias type="com.Employee" alias="emp"/>-->
         
         <!--批量起别名; name:指定包名， 默认为类名（不区分大小写）-->
 <!--        <package name="com.sqx.bean"/>-->
@@ -88,7 +88,7 @@
             class:直接引用接口的全类名，可以将xml和dao接口放在同目录下
 
         -->
-<!--        <mapper class="com.sqx.dao.EmployeeDaoAnnotation"/>-->
+<!--        <mapper class="com.EmployeeDaoAnnotation"/>-->
 <!--        <mapper resource="EmployeeDao.xml"/>-->
         <!--配置使用：重要的dao可以写配置
         简单的dao直接标注解

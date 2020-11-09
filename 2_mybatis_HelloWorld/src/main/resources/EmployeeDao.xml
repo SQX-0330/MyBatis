@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sqx.dao.EmployeeDao">
+<mapper namespace="com.EmployeeDao">
     <!--    public Employee getEmpById(Integer id);-->
-    <select id="getEmpById" resultType="com.sqx.bean.Employee">
+    <select id="getEmpById" resultType="com.Employee">
         select * from t_employee where id = #{id}
     </select>
     <!--    public int updateEmployee(Employee employee);
