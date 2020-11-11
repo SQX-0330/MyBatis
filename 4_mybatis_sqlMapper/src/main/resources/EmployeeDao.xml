@@ -43,6 +43,18 @@
         values (#{id}, #{empName}, #{gender}, #{email})
     </insert>
 
+    <!--    public int updateEmployee(Employee employee);-->
+    <update id="updateEmployee">
+        update t_employee
+            set empname=#{empName}, gender=#{gender}, email=#{email}
+            where id=#{id}
+    </update>
+
+    <!--    public int deleteEmployee(Integer id);-->
+    <delete id="deleteEmployee">
+        delete from t_employee where id=#{id}
+    </delete>
+
 
     <!--    public Employee getEmpById(Integer id);-->
     <select id="getEmpById" resultType="com.sqx.bean.Employee">
@@ -91,20 +103,39 @@
 
         无论传入什么参数都要能正确取出值
         #{key/属性名}
+        1)#{key}取值的时候可以设置一些规则
+        id=#{id, jdbcType=Integer}：
+        javaType、mode、numericScale、
+        resultMap、typeHandler、jdbcTypeName、expression
+        只有jdbcTyoe才可能是需要被指定的
+            默认不指定jdbcType，mysql没问题，oracle没问题
+            万一传入的参数是null，
+            mysql插入null没问题，oracle不知道null到底是什么类型
+
+        在mybatis中：两种取值方式
+        #{属性名}:是参数预编译的方式，参数的位置都是用?代替，参数后来都是预编译设置进去的，安全，不会有sql注入问题
+        ${属性名}:不是参数预编译，而是直接和sql语句进行拼串；不安全
+        有：sql语句只有参数位置是支持预编译的
+        一般都是使用#{}安全；在不支持参数预编译的位置进行取值就使用${};
+
     -->
 
+<!--    public List<Employee> getAllEmps();-->
+<!--    resultType="":如果返回的是集合，写的是集合里面元素的类型-->
+    <select id="getAllEmps" resultType="com.sqx.bean.Employee">
+        select  * from t_employee
+    </select>
 
 
-<!--    public int updateEmployee(Employee employee);-->
-    <update id="updateEmployee">
-        update t_employee
-            set empname=#{empName}, gender=#{gender}, email=#{email}
-            where id=#{id}
-    </update>
+<!--    public Map<String, Object> getEmpByIdReturnMap(Integer id);-->
+    <select id="getEmpByIdReturnMap" resultType="map">
+        select * from t_employee where id = #{id}
+    </select>
 
-<!--    public int deleteEmployee(Integer id);-->
-    <delete id="deleteEmployee">
-        delete from t_employee where id=#{id}
-    </delete>
+<!--    public Map<Integer, Employee> getAllEmpsReturnMap();-->
+<!--    查询多个返回一个map，查询多个情况下，集合里面写元素类型-->
+    <select id="getAllEmpsReturnMap" resultType="com.sqx.bean.Employee">
+        select * from t_employee
+    </select>
 
 </mapper>

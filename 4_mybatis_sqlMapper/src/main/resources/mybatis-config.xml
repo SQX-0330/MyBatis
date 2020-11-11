@@ -10,6 +10,13 @@
     -->
     <properties resource="dbconfig.properties"/>
 
+    <settings>
+        <!--开启延迟加载开关-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--开启属性按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
     <!--default="development":默认使用哪个环境-->
     <environments default="development">
         <environment id="development">
@@ -34,6 +41,9 @@
         -->
 <!--        <mapper class="com.EmployeeDaoAnnotation"/>-->
         <mapper resource="EmployeeDao.xml"/>
+        <mapper resource="CatDao.xml"/>
+        <mapper resource="KeyDao.xml"/>
+        <mapper resource="LockDao.xml"/>
         <!--配置使用：重要的dao可以写配置
         简单的dao直接标注解
         -->

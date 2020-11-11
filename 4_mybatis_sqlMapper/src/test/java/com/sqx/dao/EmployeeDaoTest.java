@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -95,6 +96,58 @@ public class EmployeeDaoTest {
             map.put("empName", "admin");
             Employee employeeByIdAndEmpName = dao.getEmployeeByIdAndEmpName(map);
             System.out.println(employeeByIdAndEmpName);
+        }finally {
+            openSession.close();
+        }
+    }
+
+    /*
+    测试返回一个集合
+     */
+    @Test
+    public void test03() throws IOException {
+
+        //1.根据全局配置文件，先得到SqlSessionFactory对象
+        //2.得到SqlSession对象：
+        SqlSession openSession = sqlSessionFactory.openSession();
+
+        //3.获取dao接口的实现（映射器）
+        EmployeeDao dao = openSession.getMapper(EmployeeDao.class);
+        try{
+            List<Employee> allEmps = dao.getAllEmps();
+            for (Employee allEmp : allEmps) {
+                System.out.println(allEmp);
+            }
+        }finally {
+            openSession.close();
+        }
+    }
+
+    /*
+    测试：返回一个map
+     */
+    @Test
+    public void test04() throws IOException {
+
+        //1.根据全局配置文件，先得到SqlSessionFactory对象
+        //2.得到SqlSession对象：
+        SqlSession openSession = sqlSessionFactory.openSession();
+
+
+        try{
+            //3.获取dao接口的实现（映射器）
+            EmployeeDao dao = openSession.getMapper(EmployeeDao.class);
+
+            //查询单条记录封装map
+            Map<String, Object> map = dao.getEmpByIdReturnMap(1);
+            System.out.println(map);
+
+            //查询多条记录封装map
+            Map<String, Employee> allEmpsReturnMap = dao.getAllEmpsReturnMap();
+            System.out.println(allEmpsReturnMap);
+            Employee employee = allEmpsReturnMap.get(1);
+            System.out.println(employee.getEmpName());
+
         }finally {
             openSession.close();
         }

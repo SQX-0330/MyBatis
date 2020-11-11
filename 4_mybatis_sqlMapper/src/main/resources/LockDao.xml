@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqx.dao.LockDao">
+<!--    public Lock getLockByIdStep(Integer id);-->
+    <select id="getLockByIdStep" resultMap="mylock02">
+        select * from t_lock where id=#{id}
+    </select>
+    <!--collection分布查询-->
+    <resultMap id="mylock02" type="com.sqx.bean.Lock">
+        <id property="id" column="id"/>
+        <result property="lockName" column="lockName"/>
+        <!--指定集合类型的属性封装规则-->
+        <collection property="keys" select="com.sqx.dao.KeyDao.getKeysByLockId" column="id"></collection>
+    </resultMap>
+
+
+    <!--    public Key getLockByIdSimple(Integer id);-->
+    <select id="getLockByIdSimple" resultType="com.sqx.bean.Lock">
+        select * from t_lock where id = #{id}
+    </select>
+
+
+    <!--    public Lock getLockById(Integer id);-->
+
+    <select id="getLockById" resultMap="mylock">
+        select l.*, k.id kid, k.`keyname`, k.`lockid` from t_lock l
+            left join t_key k on l.`id`=k.`lockid`
+            where l.id=#{id}
+    </select>
+
+    <resultMap id="mylock" type="com.sqx.bean.Lock">
+        <id property="id" column="id"/>
+        <result property="lockName" column="lockName"/>
+        <!--
+            collection:定义集合元素封装
+                property="":指定哪个属性是集合属性
+                javaType="":指定对象类型；association
+                ofType="":指定集合里面元素的类型
+        -->
+
+        <collection property="keys" ofType="com.sqx.bean.Key">
+            <id property="id" column="kid"/>
+            <result property="keyName" column="keyName"/>
+        </collection>
+    </resultMap>
+</mapper>
