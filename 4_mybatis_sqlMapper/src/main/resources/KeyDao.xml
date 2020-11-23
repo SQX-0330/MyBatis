@@ -20,7 +20,7 @@
         <id property="id" column="id"/>
         <result property="keyName" column="keyName"/>
         <!--
-            告诉mybatis自己去调用一个查询查锁
+            告诉mybatis自己去调用一个查询 查锁
             select="":指定一个查询sql的唯一标识；自动调用指定的sql将查出的lock封装进来
                 public Lock getLockByIdSimple(Integer id);需要传入锁的id
                 告诉mybatis把哪一列的值传递过去

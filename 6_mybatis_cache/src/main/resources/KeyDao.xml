@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sqx.dao.KeyDao">
 
-    <!--和别的dao公用以块缓存-->
-    <cache-ref namespace="com.sqx.dao.TeacherDao"/>
+    <!--和别的dao共用以块缓存-->
+    <cache-ref namespace="com.sqx.dao.TeacherMapper"/>
 
 <!--    public List<Key> getKeysByLockId(Integer id);-->
     <select id="getKeysByLockId" resultType="com.sqx.bean.Key">

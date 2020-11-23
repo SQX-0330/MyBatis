@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--1.和spring的context：property-placeholder;引用外部文件-->
+    <!--
+    resource:从类路径下开始引用
+    url:引用磁盘路径或者网络路径的资源
+    -->
+    <properties resource="dbconfig.properties"/>
+<!--    <databaseIdProvider type="DB_VENDOR">-->
+<!--        <property name="MySQL" value="mysql"/>-->
+<!--    </databaseIdProvider>-->
+
+    <settings>
+        <!--开启延迟加载开关-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--开启属性按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <!--开启全局缓存开关； -->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <!--default="development":默认使用哪个环境-->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--配置连接池-->
+            <dataSource type="POOLED">
+                <!--使用${} 取出配置文件的值-->
+                <property name="driver" value="${jdbc.driverclass}"/>
+                <property name="url" value="${jdbc.jdbcurl}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--8.写好的sql映射文件需要用mappers注册进来-->
+    <mappers>
+        <!--
+            url:从磁盘或者网络路径引用
+            resource:再类路径下找sql映射文件
+            class:直接引用接口的全类名，可以将xml和dao接口放在同目录下
+        -->
+<!--        <mapper class="com.EmployeeDaoAnnotation"/>-->
+<!--        <mapper resource="com.sqx.dao.EmployeeMapper"/>-->
+
+        <!--配置使用：重要的dao可以写配置
+        简单的dao直接标注解
+        -->
+        
+        <!--批量注册-->
+        <package name="com.sqx.dao"/>
+
+    </mappers>
+</configuration>
