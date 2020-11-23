@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace：名称空间：写接口的全类名，相当于告诉mybatis这个配置文件时实现哪个接口的-->
+
+<mapper namespace="com.sqx.dao.EmployeeDao">
+
+<!--    public Employee getEmpById(Integer id);-->
+    <!--select：用来定义一个查询操作，
+        id:方法名，相当于这个配置时对于某个方法的实现
+        resultType:指定方法运行后的返回值类型（查询操作必须指定）
+        #{id}:代表取出传递过来的某个参数的值
+    -->
+    <select id="getEmpById" resultType="com.sqx.bean.Employee">
+    select * from t_employee where id=#{id}
+  </select>
+
+<!--    public List<Employee> getEmps();-->
+    <select id="getEmps" resultType="com.sqx.bean.Employee">
+        select * from t_employee
+    </select>
+
+</mapper>
