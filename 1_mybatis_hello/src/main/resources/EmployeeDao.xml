@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--namespace：名称空间：写接口的全类名，相当于告诉mybatis这个配置文件时实现哪个接口的-->
 
-<mapper namespace="com.EmployeeDao">
+<mapper namespace="com.sqx.dao.EmployeeDao">
 
 <!--    public Employee getEmpById(Integer id);-->
     <!--select：用来定义一个查询操作，
