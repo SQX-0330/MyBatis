@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqx.dao.EmployeeDao">
+
+    <!--
+        这个文件中能写的所有标签：
+        cache：和缓存有关
+        cache-ref：和缓存有关
+
+        parameterMap：参数map：废弃的。。。原来是做复杂参数映射的
+        resultMap：结果映射，自定义结果集的封装规则
+        sql:抽取可重用的sql
+
+        delete、update、insert、select：增删改查
+
+    -->
+
+    <!--    public int insertEmployee(Employee employee);-->
+    <!--
+        让mybatis自动的将自增id赋值给传入的employee对象的id属性
+        useGeneratesKeys="true":原生jdbc获取自增主键的方法。
+        keyProperty="":将刚才自增的id封装给哪一个属性
+    -->
+    <insert id="insertEmployee" useGeneratedKeys="true" keyProperty="id">
+
+        <!--order="BEFORE":
+                在核心sql语句之前先运行一个查询sql查到id；将查到的id赋值给javaBean的哪个属性
+        -->
+    <selectKey order="BEFORE" keyProperty="id">
+        select max(id) from t_employee
+    </selectKey>
+        insert into t_employee(empname, gender, email)
+        values (#{empName}, #{gender}, #{email})
+    </insert>
+
+    <insert id="insertEmployee2">
+        <selectKey order="BEFORE" resultType="Integer" keyProperty="id">
+            select max(id)+1 from t_employee
+        </selectKey>
+        insert into t_employee(id, empname, gender, email)
+        values (#{id}, #{empName}, #{gender}, #{email})
+    </insert>
+
+    <!--    public int updateEmployee(Employee employee);-->
+    <update id="updateEmployee">
+        update t_employee
+            set empname=#{empName}, gender=#{gender}, email=#{email}
+            where id=#{id}
+    </update>
+
+    <!--    public int deleteEmployee(Integer id);-->
+    <delete id="deleteEmployee">
+        delete from t_employee where id=#{id}
+    </delete>
+
+
+    <!--    public Employee getEmpById(Integer id);-->
+    <select id="getEmpById" resultType="com.sqx.bean.Employee">
+        select * from t_employee where id=#{id}
+    </select>
+
+    <!--    public Employee getEmpByIdAndEmpName(Integer id, String empName);-->
+    <select id="getEmpByIdAndEmpName" resultType="com.sqx.bean.Employee">
+        select * from t_employee where id=#{id} and empname=#{empName}
+    </select>
+
+
+    <select id="getEmployeeByIdAndEmpName" resultType="com.sqx.bean.Employee">
+        select * from t_employee where id=#{id} and empname=#{empName}
+    </select>
+
+    <!--现象：
+        1）、单个参数
+                基本类型：
+                    取值： #{随便写}
+                传入pojo:
+
+        2）、多个参数：
+             public Employee getEmpByIdAndEmpName(Integer id, String empName);
+             取值：#{参数名}是无效了
+             可用：0，1（参数索引）或者param1，param2（第几个参数paramN）
+             原因：只要传入了多个参数;mybatis会自动的将这些参数封装在一个map中
+                    封装时使用的key就是参数的索引和第几个标识
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("1", 传入的值);
+                    map.put("2", 传入的值);
+                    #{key}就是从这个map中取的值
+              （3）@Param:为参数指定key：命名参数；推荐这么做
+                    我们可用告诉mybatis，封装参数map的时候别乱来，使用我们指定的key
+
+       4）、传入map：将多个要使用的参数封装起来
+
+        5）、传放pojo（javaBean）
+        取值：#{pojo属性名}
+
+        扩展：多个参数：自动封装map；
+        method01(@Param("id")Integer id, String empName, Employee employee);
+        Integer id -> #{id}
+        String empName -> #{param2}
+        Employee employee -> #{param3.email}
+
+        无论传入什么参数都要能正确取出值
+        #{key/属性名}
+        1)#{key}取值的时候可以设置一些规则
+        id=#{id, jdbcType=Integer}：
+        javaType、mode、numericScale、
+        resultMap、typeHandler、jdbcTypeName、expression
+        只有jdbcTyoe才可能是需要被指定的
+            默认不指定jdbcType，mysql没问题，oracle没问题
+            万一传入的参数是null，
+            mysql插入null没问题，oracle不知道null到底是什么类型
+
+        在mybatis中：两种取值方式
+        #{属性名}:是参数预编译的方式，参数的位置都是用?代替，参数后来都是预编译设置进去的，安全，不会有sql注入问题
+        ${属性名}:不是参数预编译，而是直接和sql语句进行拼串；不安全
+        有：sql语句只有参数位置是支持预编译的
+        一般都是使用#{}安全；在不支持参数预编译的位置进行取值就使用${};
+
+    -->
+
+<!--    public List<Employee> getAllEmps();-->
+<!--    resultType="":如果返回的是集合，写的是集合里面元素的类型-->
+    <select id="getAllEmps" resultType="com.sqx.bean.Employee">
+        select  * from t_employee
+    </select>
+
+
+<!--    public Map<String, Object> getEmpByIdReturnMap(Integer id);-->
+    <select id="getEmpByIdReturnMap" resultType="map">
+        select * from t_employee where id = #{id}
+    </select>
+
+<!--    public Map<Integer, Employee> getAllEmpsReturnMap();-->
+<!--    查询多个返回一个map，查询多个情况下，集合里面写元素类型-->
+    <select id="getAllEmpsReturnMap" resultType="com.sqx.bean.Employee">
+        select * from t_employee
+    </select>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqx.dao.KeyDao">
+
+<!--    public List<Key> getKeysByLockId(Integer id);-->
+    <select id="getKeysByLockId" resultType="com.sqx.bean.Key">
+        select * from t_key where lockid=#{id}
+    </select>
+
+    <!--
+    public Lock getKeyByIdSimple(Integer id);
+    查询key的时候也可以带上锁的信息
+-->
+    <select id="getKeyByIdSimple" resultMap="mykey02">
+        select * from t_key where id = #{id}
+    </select>
+    <resultMap id="mykey02" type="com.sqx.bean.Key">
+        <id property="id" column="id"/>
+        <result property="keyName" column="keyName"/>
+        <!--
+            告诉mybatis自己去调用一个查询查锁
+            select="":指定一个查询sql的唯一标识；自动调用指定的sql将查出的lock封装进来
+                public Lock getLockByIdSimple(Integer id);需要传入锁的id
+                告诉mybatis把哪一列的值传递过去
+                column:指定将哪一列的数据传递过去
+
+        -->
+        <association property="lock" select="com.sqx.dao.LockDao.getLockByIdSimple" column="lockid" fetchType="lazy">
+        </association>
+    </resultMap>
+
+
+
+
+
+    <!--    public Key getKeyById(Integer id);-->
+    <!--
+        private Integer id;
+        private String keyName;
+        private Lock lock;
+    -->
+    <select id="getKeyById" resultMap="mykey">
+        select k.id, k.`keyName`, k.`lockid`,l.`id` lid, l.`lockName` from t_key k
+         left join t_lock l on k.`lockid`=l.`id`
+            where k.`id`=#{id}
+    </select>
+
+    <!--自定义封装规则
+        使用级联属性封装联合查询出的结果
+    -->
+<!--    <resultMap id="mykey" type="com.sqx.bean.Key">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result property="keyName" column="keyName"/>-->
+<!--        <result property="lock.id" column="lid"/>-->
+<!--        <result property="lock.lockName" column="lockName"/>-->
+<!--    </resultMap>-->
+
+    <!--mybatis推荐的<association property=""></association>-->
+    <resultMap id="mykey" type="com.sqx.bean.Key">
+        <id property="id" column="id"/>
+        <result property="keyName" column="keyName"/>
+        <!--接下来的属性是一个对象，自定义这个对象的封装规则，使用association：标识联合一个对象-->
+        <!--javaType=""指定属性的类型-->
+        <association property="lock" javaType="com.sqx.bean.Lock">
+            <!--定义lock属性对应的这个Lock对象如何封装-->
+            <id property="id" column="lid"/>
+            <result property="lockName" column="lockName"/>
+        </association>
+    </resultMap>
+
+</mapper>
